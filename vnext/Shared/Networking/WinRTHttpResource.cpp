@@ -50,6 +50,7 @@ using winrt::Windows::Web::Http::HttpStringContent;
 using winrt::Windows::Web::Http::IHttpClient;
 using winrt::Windows::Web::Http::IHttpContent;
 using winrt::Windows::Web::Http::Headers::HttpMediaTypeHeaderValue;
+using winrt::Windows::Web::Http::Headers::HttpRequestHeaderCollection;
 
 namespace {
 
@@ -120,6 +121,7 @@ IAsyncOperation<HttpRequestMessage> WinRTHttpResource::CreateRequest(
   HttpMediaTypeHeaderValue contentType{nullptr};
   string contentEncoding;
   string contentLength;
+  string userAgent;
 
   // Headers are generally case-insensitive
   // https://www.ietf.org/rfc/rfc2616.txt section 4.2
@@ -139,6 +141,8 @@ IAsyncOperation<HttpRequestMessage> WinRTHttpResource::CreateRequest(
       contentEncoding = value;
     } else if (boost::iequals(name.c_str(), "Content-Length")) {
       contentLength = value;
+    } else if (boost::iequals(name.c_str(), "User-Agent")) {
+      userAgent = value;
     } else if (boost::iequals(name.c_str(), "Authorization")) {
       bool success = request.Headers().TryAppendWithoutValidation(to_hstring(name), to_hstring(value));
       if (!success) {
@@ -225,6 +229,15 @@ IAsyncOperation<HttpRequestMessage> WinRTHttpResource::CreateRequest(
     if (contentType) {
       content.Headers().ContentType(contentType);
     }
+    if (!userAgent.empty()) {
+      if (!content.Headers().try_as<HttpRequestHeaderCollection>().UserAgent().TryParseAdd(to_hstring(userAgent))) {
+        if (self->m_onError)
+          self->m_onError(reqArgs->RequestId, "Failed to parse Content-Encoding", false);
+        
+        co_return nullptr;
+      }
+    }
+
     if (!contentEncoding.empty()) {
       if (!content.Headers().ContentEncoding().TryParseAdd(to_hstring(contentEncoding))) {
         if (self->m_onError)
