@@ -230,9 +230,9 @@ IAsyncOperation<HttpRequestMessage> WinRTHttpResource::CreateRequest(
       content.Headers().ContentType(contentType);
     }
     if (!userAgent.empty()) {
-      if (!content.Headers().try_as<HttpRequestHeaderCollection>().UserAgent().TryParseAdd(to_hstring(userAgent))) {
+      if (!content.Headers().as<HttpRequestHeaderCollection>().UserAgent().TryParseAdd(to_hstring(userAgent))) {
         if (self->m_onError)
-          self->m_onError(reqArgs->RequestId, "Failed to parse Content-Encoding", false);
+          self->m_onError(reqArgs->RequestId, "Failed to parse User-Agent", false);
         
         co_return nullptr;
       }
