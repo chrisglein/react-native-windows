@@ -121,7 +121,6 @@ IAsyncOperation<HttpRequestMessage> WinRTHttpResource::CreateRequest(
   HttpMediaTypeHeaderValue contentType{nullptr};
   string contentEncoding;
   string contentLength;
-  string userAgent;
 
   // Headers are generally case-insensitive
   // https://www.ietf.org/rfc/rfc2616.txt section 4.2
@@ -141,14 +140,27 @@ IAsyncOperation<HttpRequestMessage> WinRTHttpResource::CreateRequest(
       contentEncoding = value;
     } else if (boost::iequals(name.c_str(), "Content-Length")) {
       contentLength = value;
-    } else if (boost::iequals(name.c_str(), "User-Agent")) {
-      userAgent = value;
+    } else if (boost::iequals(name.c_str(), "Accept")) {
+      if (!request.Headers().Accept().TryParseAdd(to_hstring(value))) {
+        if (self->m_onError)
+          self->m_onError(reqArgs->RequestId, "Failed to parse Accept", false);
+
+        co_return nullptr;
+      }
     } else if (boost::iequals(name.c_str(), "Authorization")) {
       bool success = request.Headers().TryAppendWithoutValidation(to_hstring(name), to_hstring(value));
       if (!success) {
         if (self->m_onError) {
           self->m_onError(reqArgs->RequestId, "Failed to append Authorization", false);
         }
+        co_return nullptr;
+      }
+    }
+    else if (boost::iequals(name.c_str(), "User-Agent")) {
+      if (!request.Headers().UserAgent().TryParseAdd(to_hstring(value))) {
+        if (self->m_onError)
+          self->m_onError(reqArgs->RequestId, "Failed to parse User-Agent", false);
+
         co_return nullptr;
       }
     } else {
@@ -228,14 +240,6 @@ IAsyncOperation<HttpRequestMessage> WinRTHttpResource::CreateRequest(
   if (content != nullptr) {
     if (contentType) {
       content.Headers().ContentType(contentType);
-    }
-    if (!userAgent.empty()) {
-      if (!content.Headers().as<HttpRequestHeaderCollection>().UserAgent().TryParseAdd(to_hstring(userAgent))) {
-        if (self->m_onError)
-          self->m_onError(reqArgs->RequestId, "Failed to parse User-Agent", false);
-        
-        co_return nullptr;
-      }
     }
 
     if (!contentEncoding.empty()) {
