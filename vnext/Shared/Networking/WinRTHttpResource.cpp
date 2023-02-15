@@ -50,7 +50,6 @@ using winrt::Windows::Web::Http::HttpStringContent;
 using winrt::Windows::Web::Http::IHttpClient;
 using winrt::Windows::Web::Http::IHttpContent;
 using winrt::Windows::Web::Http::Headers::HttpMediaTypeHeaderValue;
-using winrt::Windows::Web::Http::Headers::HttpRequestHeaderCollection;
 
 namespace {
 
@@ -241,7 +240,6 @@ IAsyncOperation<HttpRequestMessage> WinRTHttpResource::CreateRequest(
     if (contentType) {
       content.Headers().ContentType(contentType);
     }
-
     if (!contentEncoding.empty()) {
       if (!content.Headers().ContentEncoding().TryParseAdd(to_hstring(contentEncoding))) {
         if (self->m_onError)
