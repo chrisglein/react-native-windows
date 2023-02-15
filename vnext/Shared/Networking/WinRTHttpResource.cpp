@@ -141,9 +141,9 @@ IAsyncOperation<HttpRequestMessage> WinRTHttpResource::CreateRequest(
       contentLength = value;
     } else if (boost::iequals(name.c_str(), "Accept")) {
       if (!request.Headers().Accept().TryParseAdd(to_hstring(value))) {
-        if (self->m_onError)
+        if (self->m_onError) {
           self->m_onError(reqArgs->RequestId, "Failed to parse Accept", false);
-
+        }
         co_return nullptr;
       }
     } else if (boost::iequals(name.c_str(), "Authorization")) {
@@ -154,12 +154,11 @@ IAsyncOperation<HttpRequestMessage> WinRTHttpResource::CreateRequest(
         }
         co_return nullptr;
       }
-    }
-    else if (boost::iequals(name.c_str(), "User-Agent")) {
+    } else if (boost::iequals(name.c_str(), "User-Agent")) {
       if (!request.Headers().UserAgent().TryParseAdd(to_hstring(value))) {
-        if (self->m_onError)
+        if (self->m_onError) {
           self->m_onError(reqArgs->RequestId, "Failed to parse User-Agent", false);
-
+        }
         co_return nullptr;
       }
     } else {
