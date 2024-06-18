@@ -8919,9 +8919,9 @@ kleur@^3.0.3:
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
 lage@^2.7.1:
-  version "2.7.15"
-  resolved "https://registry.yarnpkg.com/lage/-/lage-2.7.15.tgz#966d16880954221fe91e959fadda83936b73c249"
-  integrity sha512-50+L6cSpCJOvLNi2VLoQuDU/8ncmXDHty02PKJveVzBA2BiQAwx/VdJw4BAdGflEUM7M/mkn86LDMuf9PHUxZQ==
+  version "2.7.18"
+  resolved "https://registry.yarnpkg.com/lage/-/lage-2.7.18.tgz#f1acab64dc107a9d1a79c2b91d4f57f1800b8e58"
+  integrity sha512-4sX1W2sDt7ybVFJvKSSnN12QSWXKsd6IXPjSQO+DZmnyD/sM8fm5UeSiLRqhpH4K0IQw9t0FFJM/l9iS4zjomQ==
   dependencies:
     glob-hasher "^1.4.2"
   optionalDependencies:
